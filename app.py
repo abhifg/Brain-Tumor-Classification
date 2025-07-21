@@ -64,6 +64,7 @@ def overlay_gradcam(img_pil, heatmap, alpha=0.4):
     heatmap = np.uint8(255 * heatmap)
     heatmap_color = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
     superimposed_img = cv2.addWeighted(img, 1 - alpha, heatmap_color, alpha, 0)
+    superimposed_img=cv2.cvtColor(superimposed_img, cv2.COLOR_BGR2RGB)
     return superimposed_img
 
 # Streamlit UI
@@ -82,7 +83,7 @@ if uploaded_file is not None:
         
 
         try:
-            preds = base_model.predict(img_array)
+            preds = model.predict(img_array)
             pred_class = np.argmax(preds[0])
             pred_prob = preds[0][pred_class]
 
