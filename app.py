@@ -1,10 +1,10 @@
 import numpy as np
-import streamlit as tf
+import streamlit as st
 import tensorflow as tf
 import cv2
 import matplotlib.pyplot as plt
-import tensorflow.keras.preprocessing import image
-import tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.models import load_model
 from PIL import image
 
 def load_model():
