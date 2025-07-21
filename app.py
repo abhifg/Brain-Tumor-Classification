@@ -7,7 +7,7 @@ from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model
 from PIL import Image
 
-def load_model():
+def load_my_model():
     model=load_model('xception_model.h5')
     base_model=None
     for layer in model.layers:
@@ -56,7 +56,7 @@ if uploaded_file is not None:
     img_array = image.img_to_array(img_pil.resize((299, 299)))
     img_array = np.expand_dims(img_array, axis=0) / 255.0
 
-    model, base_model = load_model()
+    model, base_model = load_my_model()
 
     with st.spinner("Classifying and generating Grad-CAM..."):
         heatmap, predictions = generate_gradcam(img_array, base_model)
