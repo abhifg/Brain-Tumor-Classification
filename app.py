@@ -24,16 +24,22 @@ def download_model():
         raise FileNotFoundError("Model could not be downloaded.")
 
     return keras_load_model(MODEL_PATH)
-
-def make_gradcam_heatmap(img_array, model, last_conv_layer_name, pred_index=None):
-    base_model = model.get_layer("xception")
-    last_conv_layer = base_model.get_layer(last_conv_layer_name)
+model = download_model()
+base_model = None
+for layer in model.layers:
+    if layer.name == 'xception':
+        base_model = layer
+        break
+if base_model is None:
+    raise ValueError("Xception not found!")
+_ = model.predict(np.zeros((1, 299, 299, 3)))
+def make_gradcam_heatmap(img_array, base_model, last_conv_layer_name, pred_index=None):
 
     grad_model = tf.keras.models.Model(
-        inputs=model.input,
+        inputs=base_model.input,
         outputs=[
-            last_conv_layer.output,
-            model.output
+            base_model.get_layer(last_conv_layer_name).output,
+            base_model.output
         ]
     )
 
@@ -73,7 +79,7 @@ if uploaded_file is not None:
     img_array = np.expand_dims(img_array, axis=0) / 255.0
 
     with st.spinner("🔍 Loading model & predicting..."):
-        model = download_model()
+        
 
         try:
             preds = model.predict(img_array)
@@ -95,7 +101,7 @@ if uploaded_file is not None:
 
             # If tumor (pred_class 0,1,2), show heatmap
             if pred_class in [0,1,3]:
-                heatmap = make_gradcam_heatmap(img_array, model, LAST_CONV_LAYER)
+                heatmap = make_gradcam_heatmap(img_array, base_model, LAST_CONV_LAYER)
                 gradcam_img = overlay_gradcam(pil_img, heatmap)
                 st.image(gradcam_img, caption="🔥 Tumor Area (Grad-CAM)", use_column_width=True)
 
