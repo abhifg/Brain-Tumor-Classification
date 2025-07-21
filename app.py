@@ -95,7 +95,10 @@ if uploaded_file is not None:
     with st.spinner("🔍 Downloading & loading model, generating Grad-CAM..."):
         model, base_model = download_and_load_model()
         heatmap, predictions = generate_gradcam(img_array, base_model)
+        st.write(f"Predictions shape: {predictions.shape}")## For testing purposes
+        st.write(f"Predictions: {predictions}")
         pred_class = np.argmax(predictions[0])
+        st.write(f"Predicted class index: {pred_class}")
         pred_prob = float(predictions[0][pred_class])
 
         st.write(f"🔷 Predictions: {predictions}")
