@@ -1,6 +1,7 @@
 import numpy as np
 import streamlit as st
 import tensorflow as tf
+import os
 import cv2
 import matplotlib.pyplot as plt
 from tensorflow.keras.preprocessing import image
@@ -8,6 +9,7 @@ from tensorflow.keras.models import load_model
 from PIL import Image
 
 def load_my_model():
+    assert os.path.exists('xception_model.h5'), "Model file not found!"
     model=load_model('xception_model.h5')
     base_model=None
     for layer in model.layers:
