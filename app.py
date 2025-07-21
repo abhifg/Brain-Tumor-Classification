@@ -56,6 +56,8 @@ if uploaded_file is not None:
     img_array = image.img_to_array(img_pil.resize((299, 299)))
     img_array = np.expand_dims(img_array, axis=0) / 255.0
 
+    model, base_model = load_model()
+
     with st.spinner("Classifying and generating Grad-CAM..."):
         heatmap, predictions = generate_gradcam(img_array, base_model)
         pred_class = np.argmax(predictions[0])
