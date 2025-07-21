@@ -11,13 +11,18 @@ from PIL import Image
 MODEL_PATH = "xception_model.h5"
 MODEL_ID = "1mM9CHnWj90p8Rfi7QXyqQou4JE_CnT1d"
 
-@st.cache_resource
-def load_my_model():
-    st.info("📥 Downloading model file from Google Drive...")
+TUMOR_CLASSES = ["Glioma", "Meningioma", "Pituitary", "No Tumor"]
+
+def download_and_load_model():
+    st.info("📥 Downloading model file from Google Drive (every run)...")
     url = f"https://drive.google.com/uc?id={MODEL_ID}"
+
+    if os.path.exists(MODEL_PATH):
+        os.remove(MODEL_PATH)
+
     gdown.download(url, MODEL_PATH, quiet=False, fuzzy=True)
 
-    # Check file size to validate
+    # Check file size
     if os.path.exists(MODEL_PATH):
         size_mb = os.path.getsize(MODEL_PATH) / (1024 * 1024)
         st.write(f"✅ Model downloaded. Size: {size_mb:.2f} MB")
@@ -25,7 +30,6 @@ def load_my_model():
         st.error("❌ Model download failed!")
         raise FileNotFoundError("Model could not be downloaded.")
 
-    # Load the model
     try:
         model = keras_load_model(MODEL_PATH)
         base_model = None
@@ -88,20 +92,18 @@ if uploaded_file is not None:
     img_array = image.img_to_array(img_pil.resize((299, 299)))
     img_array = np.expand_dims(img_array, axis=0) / 255.0
 
-    with st.spinner("🔍 Loading model and generating Grad-CAM..."):
-        model, base_model = load_my_model()
+    with st.spinner("🔍 Downloading & loading model, generating Grad-CAM..."):
+        model, base_model = download_and_load_model()
         heatmap, predictions = generate_gradcam(img_array, base_model)
-        pred_class = np.argmax(predictions[0])
-        pred_prob = predictions[0][pred_class]
+        pred_class = int(np.argmax(predictions[0]))
+        pred_prob = float(predictions[0][pred_class])
 
-        # Replace with your actual class names
-        num_classes = predictions.shape[-1]
-        class_names = [f"Class {i}" for i in range(num_classes)]
+        st.write(f"🔷 Predictions: {predictions}")
+        st.write(f"🔷 Predicted class index: {pred_class}")
+        st.write(f"🔷 Predicted probability: {pred_prob:.2f}")
 
-        
-
-        if pred_class < len(class_names):
-            predicted_label = class_names[pred_class]
+        if pred_class < len(TUMOR_CLASSES):
+            predicted_label = TUMOR_CLASSES[pred_class]
         else:
             predicted_label = f"Unknown class ({pred_class})"
 
