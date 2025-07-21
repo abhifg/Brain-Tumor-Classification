@@ -16,9 +16,19 @@ def load_my_model():
     if not os.path.exists(MODEL_PATH):
         st.info("📥 Model file not found locally. Downloading from Google Drive...")
         url = f"https://drive.google.com/uc?id={MODEL_ID}"
-        gdown.download(url, MODEL_PATH, quiet=False)
+        try:
+            gdown.download(url, MODEL_PATH, quiet=False)
+            st.success("✅ Model downloaded.")
+        except Exception as e:
+            st.error(f"❌ Failed to download model: {e}")
+            st.stop()
 
-    model = keras_load_model(MODEL_PATH)
+    try:
+        model = keras_load_model(MODEL_PATH)
+        st.success("✅ Model loaded.")
+    except Exception as e:
+        st.error(f"❌ Failed to load model: {e}")
+        st.stop()
 
     base_model = None
     for layer in model.layers:
