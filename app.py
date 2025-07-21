@@ -5,7 +5,7 @@ import cv2
 import matplotlib.pyplot as plt
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model
-from PIL import image
+from PIL import Image
 
 def load_model():
     model=load_model('xception_model.h5')
