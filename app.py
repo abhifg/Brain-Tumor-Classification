@@ -98,9 +98,7 @@ if uploaded_file is not None:
         num_classes = predictions.shape[-1]
         class_names = [f"Class {i}" for i in range(num_classes)]
 
-        st.write(f"🔷 Predictions: {predictions}")
-        st.write(f"🔷 Predicted class index: {pred_class}")
-        st.write(f"🔷 Number of classes in model: {num_classes}")
+        
 
         if pred_class < len(class_names):
             predicted_label = class_names[pred_class]
