@@ -19,10 +19,11 @@ def load_my_model():
         try:
             gdown.download(url, MODEL_PATH, quiet=False)
             st.success("✅ Model downloaded.")
+            st.write(f"Downloaded file size: {os.path.getsize(MODEL_PATH) / 1024 / 1024:.2f} MB")
         except Exception as e:
             st.error(f"❌ Failed to download model: {e}")
             st.stop()
-    st.write(f"Downloaded file size: {os.path.getsize(MODEL_PATH) / 1024 / 1024:.2f} MB")
+    
 
     try:
         model = keras_load_model(MODEL_PATH)
