@@ -82,7 +82,7 @@ if uploaded_file is not None:
         
 
         try:
-            preds = model.predict(img_array)
+            preds = base_model.predict(img_array)
             pred_class = np.argmax(preds[0])
             pred_prob = preds[0][pred_class]
 
