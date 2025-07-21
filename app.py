@@ -3,14 +3,22 @@ import streamlit as st
 import tensorflow as tf
 import os
 import cv2
+import gdown
 import matplotlib.pyplot as plt
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model
 from PIL import Image
 
+MODEL_PATH = "xception_model.h5"
+MODEL_ID = "1mM9CHnWj90p8Rfi7QXyqQou4JE_CnT1d"
 def load_my_model():
-    assert os.path.exists('xception_model.h5'), "Model file not found!"
-    model=load_model('xception_model.h5')
+    if not os.path.exists(MODEL_PATH):
+        print("Model file not found locally. Downloading from Google Drive...")
+        url = f"https://drive.google.com/uc?id={MODEL_ID}"
+        gdown.download(url, MODEL_PATH, quiet=False)
+    
+    # load model
+    model = load_model(MODEL_PATH)
     base_model=None
     for layer in model.layers:
         if layer.name=='xception':
