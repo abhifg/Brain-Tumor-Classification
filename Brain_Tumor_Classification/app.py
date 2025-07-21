@@ -3,7 +3,7 @@ import streamlit as tf
 import tensorflow as tf
 import cv2
 import matplotlib.pyplot as plt
-import tensorflow.keras.preprocessing import image
+from tensorflow.keras.preprocessing import image
 import tensorflow.keras.models import load_model
 from PIL import image
 
