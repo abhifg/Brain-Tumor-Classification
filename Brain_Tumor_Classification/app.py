@@ -1,5 +1,5 @@
 import numpy as np
-import streamlit as tf
+import streamlit as st
 import tensorflow as tf
 import cv2
 import matplotlib.pyplot as plt
