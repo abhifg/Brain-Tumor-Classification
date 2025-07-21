@@ -19,7 +19,6 @@ def download_model():
 
     if os.path.exists(MODEL_PATH):
         size_mb = os.path.getsize(MODEL_PATH) / (1024 * 1024)
-        st.write(f"✅ Model downloaded. Size: {size_mb:.2f} MB")
     else:
         st.error("❌ Model download failed!")
         raise FileNotFoundError("Model could not be downloaded.")
