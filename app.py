@@ -26,7 +26,7 @@ def download_model():
 
     return keras_load_model(MODEL_PATH)
 
-def make_gradcam_heatmap(img_array, model, last_conv_layer_name, pred_index=None):
+def make_gradcam_heatmap(img_array, model, last_conv_layer_name="block14_sepconv2_act", pred_index=None):
     grad_model = tf.keras.models.Model(
         [model.inputs], 
         [model.get_layer(last_conv_layer_name).output, model.output]
