@@ -16,18 +16,21 @@ def load_my_model():
     if not os.path.exists(MODEL_PATH):
         st.info("📥 Model file not found locally. Downloading from Google Drive...")
         url = f"https://drive.google.com/uc?id={MODEL_ID}"
-        try:
-            gdown.download(url, MODEL_PATH, quiet=False)
-            st.success("✅ Model downloaded.")
-            st.write(f"Downloaded file size: {os.path.getsize(MODEL_PATH) / 1024 / 1024:.2f} MB")
-        except Exception as e:
-            st.error(f"❌ Failed to download model: {e}")
-            st.stop()
-    
+        gdown.download(url, MODEL_PATH, quiet=False)
+
+        # ⬇️ Check if download succeeded and file size is OK
+        if os.path.exists(MODEL_PATH):
+            size_mb = os.path.getsize(MODEL_PATH) / (1024 * 1024)
+            st.write(f"✅ Model file downloaded. Size: {size_mb:.2f} MB")
+        else:
+            st.error("❌ Model file was NOT downloaded!")
+            st.stop()  # Stop execution if download failed
+
+    else:
+        st.info("✅ Model file already exists locally.")
 
     try:
         model = keras_load_model(MODEL_PATH)
-        st.success("✅ Model loaded.")
     except Exception as e:
         st.error(f"❌ Failed to load model: {e}")
         st.stop()
