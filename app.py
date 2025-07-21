@@ -14,9 +14,11 @@ def load_model():
         if layer.name=='xception':
             base_model=layer
         break
+    if base_model is None:
+        base_model = model
     return model,base_model
 
-def generate_gradcam(img_arr,base_model,last_conv_layer='block14_sepcov2_act'):
+def generate_gradcam(img_arr,base_model,last_conv_layer='block14_sepconv2_act'):
     grad_model=tf.keras.models.Model(
         inputs=base_model.input,
         output=[base_model.getlayer(last_conv_layer).output,base_model.output]
