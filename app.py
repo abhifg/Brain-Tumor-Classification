@@ -13,36 +13,32 @@ MODEL_ID = "1mM9CHnWj90p8Rfi7QXyqQou4JE_CnT1d"
 
 @st.cache_resource
 def load_my_model():
-    if not os.path.exists(MODEL_PATH):
-        st.info("📥 Model file not found locally. Downloading from Google Drive...")
-        url = f"https://drive.google.com/uc?id={MODEL_ID}"
-        gdown.download(url, MODEL_PATH, quiet=False)
+    st.info("📥 Downloading model file from Google Drive...")
+    url = f"https://drive.google.com/uc?id={MODEL_ID}"
+    gdown.download(url, MODEL_PATH, quiet=False, fuzzy=True)
 
-        # ⬇️ Check if download succeeded and file size is OK
-        if os.path.exists(MODEL_PATH):
-            size_mb = os.path.getsize(MODEL_PATH) / (1024 * 1024)
-            st.write(f"✅ Model file downloaded. Size: {size_mb:.2f} MB")
-        else:
-            st.error("❌ Model file was NOT downloaded!")
-            st.stop()  # Stop execution if download failed
-
+    # Check file size to validate
+    if os.path.exists(MODEL_PATH):
+        size_mb = os.path.getsize(MODEL_PATH) / (1024 * 1024)
+        st.write(f"✅ Model downloaded. Size: {size_mb:.2f} MB")
     else:
-        st.info("✅ Model file already exists locally.")
+        st.error("❌ Model download failed!")
+        raise FileNotFoundError("Model could not be downloaded.")
 
+    # Load the model
     try:
         model = keras_load_model(MODEL_PATH)
+        base_model = None
+        for layer in model.layers:
+            if layer.name == 'xception':
+                base_model = layer
+                break
+        if base_model is None:
+            base_model = model
+        return model, base_model
     except Exception as e:
         st.error(f"❌ Failed to load model: {e}")
-        st.stop()
-
-    base_model = None
-    for layer in model.layers:
-        if layer.name == 'xception':
-            base_model = layer
-            break
-    if base_model is None:
-        base_model = model
-    return model, base_model
+        raise
 
 
 def generate_gradcam(img_arr, base_model, last_conv_layer='block14_sepconv2_act', pred_index=None):
