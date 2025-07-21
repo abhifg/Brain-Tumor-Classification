@@ -13,7 +13,6 @@ MODEL_ID = "1mM9CHnWj90p8Rfi7QXyqQou4JE_CnT1d"
 LAST_CONV_LAYER = "block14_sepconv2_act"
 
 def download_model():
-    st.info("📥 Downloading model file from Google Drive...")
     url = f"https://drive.google.com/uc?id={MODEL_ID}"
     gdown.download(url, MODEL_PATH, quiet=False, fuzzy=True)
 
