@@ -27,34 +27,31 @@ def download_model():
 
 def make_gradcam_heatmap(img_array, model, last_conv_layer_name, pred_index=None):
     base_model = model.get_layer("xception")
+    last_conv_layer = base_model.get_layer(last_conv_layer_name)
 
-    # Define grad model for base_model
     grad_model = tf.keras.models.Model(
-        inputs=base_model.input,
+        inputs=model.input,
         outputs=[
-            base_model.get_layer("block14_sepconv2_act").output,
-            base_model.output
+            last_conv_layer.output,
+            model.output
         ]
     )
 
-    # Preprocess input to match base_model input
-    img_preprocessed = img_array  # already normalized & resized
-
     with tf.GradientTape() as tape:
-        conv_outputs, predictions = grad_model(img_preprocessed)
+        conv_outputs, predictions = grad_model(img_array)
         if pred_index is None:
             pred_index = tf.argmax(predictions[0])
         class_output = predictions[:, pred_index]
 
     grads = tape.gradient(class_output, conv_outputs)
     pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
+
     conv_outputs = conv_outputs[0]
     heatmap = conv_outputs @ pooled_grads[..., tf.newaxis]
     heatmap = tf.squeeze(heatmap)
 
     heatmap = tf.maximum(heatmap, 0) / (tf.reduce_max(heatmap) + 1e-10)
     return heatmap.numpy()
-
 def overlay_gradcam(img_pil, heatmap, alpha=0.4):
     img = np.array(img_pil.resize((299, 299)))
     heatmap = cv2.resize(heatmap, (img.shape[1], img.shape[0]))
