@@ -104,3 +104,20 @@ if uploaded_file is not None:
 
         except Exception as e:
             st.error(f"❌ Something went wrong: {e}")
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: visible;}
+            footer {visibility: hidden;}
+            footer:after {
+	            content:'Made by: Abhirup Ghosh - 2025'; 
+	            visibility: visible;
+	            display: block;
+	            position: relative;
+	            #background-color: #DAF7A6 ;
+	            padding: 5px;
+	            top: 2px;
+                color: #11FF00;
+}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
