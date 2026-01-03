@@ -7,28 +7,23 @@ import cv2
 from tensorflow.keras.models import load_model as keras_load_model
 from tensorflow.keras.preprocessing import image
 from PIL import Image
+import request
 
 MODEL_PATH = "xception_model.h5"
-MODEL_ID = "1mM9CHnWj90p8Rfi7QXyqQou4JE_CnT1d"
+MODEL_URL = "https://huggingface.co/abhifg/xception.h5/resolve/main/xception_model.h5"
 LAST_CONV_LAYER = "block14_sepconv2_act"
 
 @st.cache_resource
-def download_model():
-    url = f"https://drive.google.com/uc?id={MODEL_ID}"
-    gdown.download(url, MODEL_PATH, quiet=False, fuzzy=True)
-
-    if os.path.exists(MODEL_PATH):
-        size_mb = os.path.getsize(MODEL_PATH) / (1024 * 1024)
-    else:
-        st.error("❌ Model download failed!")
-        raise FileNotFoundError("Model could not be downloaded.")
-
+def load_model():
+    if not os.path.exists(MODEL_PATH):
+        with st.spinner("⬇️ Downloading model from Hugging Face..."):
+            response = requests.get(MODEL_URL, timeout=60)
+            response.raise_for_status()
+            with open(MODEL_PATH, "wb") as f:
+                f.write(response.content)
     return keras_load_model(MODEL_PATH)
-try:
-    model = download_model()
-except Exception:
-    st.error("🚫 Model could not be loaded. Please check hosting or permissions.")
-    st.stop()
+
+model = load_model()
 base_model = None
 for layer in model.layers:
     if layer.name == 'xception':
