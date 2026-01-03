@@ -7,7 +7,7 @@ import cv2
 from tensorflow.keras.models import load_model as keras_load_model
 from tensorflow.keras.preprocessing import image
 from PIL import Image
-import request
+import requests
 
 MODEL_PATH = "xception_model.h5"
 MODEL_URL = "https://huggingface.co/abhifg/xception.h5/resolve/main/xception_model.h5"
