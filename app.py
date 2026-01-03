@@ -24,7 +24,11 @@ def download_model():
         raise FileNotFoundError("Model could not be downloaded.")
 
     return keras_load_model(MODEL_PATH)
-model = download_model()
+try:
+    model = download_model()
+except Exception:
+    st.error("🚫 Model could not be loaded. Please check hosting or permissions.")
+    st.stop()
 base_model = None
 for layer in model.layers:
     if layer.name == 'xception':
